@@ -1,7 +1,6 @@
-Vector start;
-float distance = 40;
+float distance = 50;
 
-int limit = 7;
+int limit = 5;
 float rec = 0;
 
 
@@ -9,20 +8,31 @@ void setup() {
   size(800, 600);
   smooth();
   strokeWeight(2);
-
-  start = new Vector(width / 2, height / 2);
 }
 
 void draw() {
   background(0);
   stroke(255);
   smooth();
-  
-  float angle1 = sin(rec++ / 60) * TWO_PI * .25;
-  drawLine(start, distance, TWO_PI * .75, angle1, limit);
-  drawLine(start, distance, TWO_PI * 0, angle1, limit);
-  drawLine(start, distance, TWO_PI * .25, angle1, limit);
-  drawLine(start, distance, TWO_PI * .5, angle1, limit);
+  //float angle = sin(rec++ / 60) * TWO_PI * .25;
+  rec += .01;
+  //float angle = rec % TWO_PI * .25;
+  float angleUnit = TWO_PI * .25;
+  float angle = (rec % angleUnit * 2) - angleUnit;
+  float space = limit * distance;
+
+  for (float x = 0; x < width + space; x += space) {
+    for (float y = 0; y < height + space; y += space) {
+      drawQuadTree(new Vector(x, y), angle);
+    }
+  }
+}
+
+void drawQuadTree(Vector point, float angle) {
+  drawLine(point, distance, TWO_PI * .75, angle, limit);
+  drawLine(point, distance, TWO_PI * 0, angle, limit);
+  drawLine(point, distance, TWO_PI * .25, angle, limit);
+  drawLine(point, distance, TWO_PI * .5, angle, limit);
 }
 
 void drawLine(Vector point, float distance, float angle, float angleDelta, int limit) {
@@ -33,9 +43,9 @@ void drawLine(Vector point, float distance, float angle, float angleDelta, int l
 
   Vector left = point.angle(leftAngle, distance);
   Vector right = point.angle(rightAngle, distance);
-  
 
-  float distanceDamp = .75;
+
+  float distanceDamp = 1;
   line(point.x, point.y, left.x, left.y);
   drawLine(left, distance * distanceDamp, leftAngle, angleDelta, limit - 1);
   drawLine(right, distance * distanceDamp, rightAngle, angleDelta, limit - 1);
